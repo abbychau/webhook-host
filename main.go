@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 )
@@ -41,10 +42,14 @@ func main() {
 	// Catch-all handler for webhooks
 	http.HandleFunc("/", webhookHandler)
 
-	port := ":8080"
-	fmt.Printf("Server started on http://localhost%s\n", port)
-	fmt.Printf("UI available at http://localhost%s/ui/\n", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	addr := ":" + port
+	fmt.Printf("Server started on http://localhost%s\n", addr)
+	fmt.Printf("UI available at http://localhost%s/ui/\n", addr)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
 func webhookHandler(w http.ResponseWriter, r *http.Request) {
